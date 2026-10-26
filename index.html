@@ -50,6 +50,34 @@
     }
     @keyframes girar { to { transform: rotate(360deg); } }
     noscript { display: block; padding: 24px; font-family: sans-serif; text-align: center; }
+    .hidden { display: none; }
+    #instalar {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      padding: 32px 24px;
+      text-align: center;
+      font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #FAFAF8;
+    }
+    #instalar img { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 4px 14px rgba(46,42,38,0.18); }
+    #instalar h2 { margin: 4px 0 0; color: #2E2A26; }
+    #instalar p { color: #5a5650; font-size: 14.5px; line-height: 1.5; max-width: 320px; margin: 0; }
+    #instalar button {
+      margin-top: 6px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 12px;
+      background: #5B7F4A;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -60,6 +88,13 @@
     <span>Abriendo Inventario…</span>
   </div>
 
+  <div id="instalar" class="hidden">
+    <img src="icon-192.png" alt="">
+    <h2>Inventario</h2>
+    <p>Para instalarla con el ícono correcto: abre el menú (⋮) de Chrome y toca <b>“Agregar a pantalla de inicio”</b> o <b>“Instalar app”</b>.</p>
+    <button onclick="ir()">Abrir sin instalar</button>
+  </div>
+
   <noscript>
     <p>Activa JavaScript, o entra directo a
       <a href="https://script.google.com/macros/s/AKfycbwf7ptkeOG2zGGYGfjymuIbxWmyXqoQXXaoqMhSMVIaCxgYAfFPYcxUXb-mXD1mo08TFA/exec">la app de inventario</a>.
@@ -67,21 +102,29 @@
   </noscript>
 
   <script>
-    // Si la app ya esta instalada (se abrio desde el icono en la
-    // pantalla de inicio), salta casi de inmediato. Si se abre desde
-    // el navegador normal (primera vez, para poder agregarla a la
-    // pantalla de inicio con el icono correcto), espera unos segundos
-    // antes de saltar, para dar tiempo a usar "Agregar a pantalla de
-    // inicio" mientras se ve esta pantalla.
-    var instalada = window.matchMedia('(display-mode: standalone)').matches
-      || window.navigator.standalone === true;
-    var espera = instalada ? 50 : 6000;
-
-    setTimeout(function () {
+    function ir() {
       location.replace(
         'https://script.google.com/macros/s/AKfycbwf7ptkeOG2zGGYGfjymuIbxWmyXqoQXXaoqMhSMVIaCxgYAfFPYcxUXb-mXD1mo08TFA/exec'
       );
-    }, espera);
+    }
+
+    // Si la app ya esta instalada (se abrio desde el icono en la
+    // pantalla de inicio), salta casi de inmediato: no hace falta
+    // esperar nada porque el icono ya quedo bien guardado.
+    var instalada = window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
+
+    if (instalada) {
+      setTimeout(ir, 50);
+    } else {
+      // Primera vez / navegador normal: NO redirige sola. Se queda en
+      // esta pantalla para dar tiempo (sin apuro) a usar "Agregar a
+      // pantalla de inicio" / "Instalar app" del menu de Chrome con el
+      // icono correcto. Quien no quiera instalarla puede tocar el boton
+      // para seguir igual.
+      document.getElementById('cargando').classList.add('hidden');
+      document.getElementById('instalar').classList.remove('hidden');
+    }
   </script>
 
   <script>
